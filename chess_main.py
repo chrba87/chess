@@ -1,11 +1,18 @@
 import pygame
 import sys
-
+from chess_board import Board
 pygame.init()
 
 size = hight, width = 800, 800
 
 surface = pygame.display.set_mode(size)
+
+board = Board()
+
+board.board[0][3] = "Q"
+
+for y in board.board:
+    print(y)
 
 playing = True
 while playing:
@@ -13,6 +20,6 @@ while playing:
         if event.type == pygame.QUIT: sys.exit()
 
     
-    surface.fill((0, 0, 0))
+    board.draw(surface)
 
     pygame.display.flip()
