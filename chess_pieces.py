@@ -78,6 +78,12 @@ class Bishop_w(Pieces):
         self.img = pygame.image.load(os.path.join('images', 'w_bishop_png_512px.png'))
         self.img = pygame.transform.scale(self.img, (self.square_size, self.square_size))
 
+    def get_moves(self, board):
+        self.directions = [(1, 1), (-1, -1), (1, -1), (-1 , 1)]
+        moves = [self.pos]
+        for direction in self.directions:
+            moves += self.check_straight(self.pos, direction, board)
+        return moves
 
 class Bishop_b(Pieces):
     def __init__(self):
@@ -87,6 +93,12 @@ class Bishop_b(Pieces):
         self.img = pygame.image.load(os.path.join('images', 'b_bishop_png_512px.png'))
         self.img = pygame.transform.scale(self.img, (self.square_size, self.square_size))
     
+    def get_moves(self, board):
+        self.directions = [(1, 1), (-1, -1), (1, -1), (-1 , 1)]
+        moves = [self.pos]
+        for direction in self.directions:
+            moves += self.check_straight(self.pos, direction, board)
+        return moves
 
 class Knight_w(Pieces):
     def __init__(self):
@@ -111,6 +123,13 @@ class Rook_w(Pieces):
         self.symbol = "R"
         self.img = pygame.image.load(os.path.join('images', 'w_rook_png_512px.png'))
         self.img = pygame.transform.scale(self.img, (self.square_size, self.square_size))
+
+    def get_moves(self, board):
+        self.directions = [(1, 0), (-1, 0), (0, 1), (0 , -1)]
+        moves = [self.pos]
+        for direction in self.directions:
+            moves += self.check_straight(self.pos, direction, board)
+        return moves
 
 class Rook_b(Pieces):
     def __init__(self):
