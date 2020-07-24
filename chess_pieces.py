@@ -21,7 +21,7 @@ class Pieces:
     def get_moves(self, board):
         return [self.pos]
 
-    def check_straight(self, pos, dir, board):
+    def check_recursive(self, pos, dir, board):
         new_pos = self.add_pos(pos, dir)
         if not new_pos:
             return []
@@ -31,7 +31,7 @@ class Pieces:
             else:
                 return [new_pos]
         else:
-            moves = [new_pos] + self.check_straight(new_pos, dir, board)
+            moves = [new_pos] + self.check_recursive(new_pos, dir, board)
         return moves
 
 class Queen_w(Pieces):
@@ -47,7 +47,7 @@ class Queen_w(Pieces):
         self.directions = [(1, 0), (-1, 0), (0, 1), (0 , -1), (1, 1), (-1, -1), (1, -1), (-1 , 1)]
         moves = [self.pos]
         for direction in self.directions:
-            moves += self.check_straight(self.pos, direction, board)
+            moves += self.check_recursive(self.pos, direction, board)
         return moves
 
 class Queen_b(Pieces):
@@ -62,7 +62,7 @@ class Queen_b(Pieces):
         self.directions = [(1, 0), (-1, 0), (0, 1), (0 , -1), (1, 1), (-1, -1), (1, -1), (-1 , 1)]
         moves = [self.pos]
         for direction in self.directions:
-            moves += self.check_straight(self.pos, direction, board)
+            moves += self.check_recursive(self.pos, direction, board)
         return moves
 
 class King_w(Pieces):
@@ -73,6 +73,18 @@ class King_w(Pieces):
         self.img = pygame.image.load(os.path.join('images', 'w_king_png_512px.png'))
         self.img = pygame.transform.scale(self.img, (self.square_size, self.square_size))
 
+    def get_moves(self, board):
+        self.directions = [(1, 0), (-1, 0), (0, 1), (0 , -1), (1, 1), (-1, -1), (1, -1), (-1 , 1)]
+        moves = [self.pos]
+        for d in self.directions:
+            new_cap = self.add_pos(self.pos, d)
+            if new_cap:
+                if board[new_cap[1]][new_cap[0]]:
+                    if board[new_cap[1]][new_cap[0]].isWhite != self.isWhite:
+                        moves.append(new_cap)
+                else:
+                    moves.append(new_cap)
+        return moves
 
 class King_b(Pieces):
     def __init__(self):
@@ -82,6 +94,18 @@ class King_b(Pieces):
         self.img = pygame.image.load(os.path.join('images', 'b_king_png_512px.png'))
         self.img = pygame.transform.scale(self.img, (self.square_size, self.square_size))
 
+    def get_moves(self, board):
+        self.directions = [(1, 0), (-1, 0), (0, 1), (0 , -1), (1, 1), (-1, -1), (1, -1), (-1 , 1)]
+        moves = [self.pos]
+        for d in self.directions:
+            new_cap = self.add_pos(self.pos, d)
+            if new_cap:
+                if board[new_cap[1]][new_cap[0]]:
+                    if board[new_cap[1]][new_cap[0]].isWhite != self.isWhite:
+                        moves.append(new_cap)
+                else:
+                    moves.append(new_cap)
+        return moves
 
 class Bishop_w(Pieces):
     def __init__(self):
@@ -95,7 +119,7 @@ class Bishop_w(Pieces):
         self.directions = [(1, 1), (-1, -1), (1, -1), (-1 , 1)]
         moves = [self.pos]
         for direction in self.directions:
-            moves += self.check_straight(self.pos, direction, board)
+            moves += self.check_recursive(self.pos, direction, board)
         return moves
 
 class Bishop_b(Pieces):
@@ -110,7 +134,7 @@ class Bishop_b(Pieces):
         self.directions = [(1, 1), (-1, -1), (1, -1), (-1 , 1)]
         moves = [self.pos]
         for direction in self.directions:
-            moves += self.check_straight(self.pos, direction, board)
+            moves += self.check_recursive(self.pos, direction, board)
         return moves
 
 class Knight_w(Pieces):
@@ -121,6 +145,20 @@ class Knight_w(Pieces):
         self.img = pygame.image.load(os.path.join('images', 'w_knight_png_512px.png'))
         self.img = pygame.transform.scale(self.img, (self.square_size, self.square_size))
 
+    def get_moves(self, board):
+        #TODO check why (-2, -1) does not seem to work
+        self.directions = [(2, 1), (2, -1), (1, 2), (-1, 2), (-2, 1), (-2, -1), (1, -2), (-1, 2)]
+        moves = [self.pos]
+        for d in self.directions:
+            new_cap = self.add_pos(self.pos, d)
+            if new_cap:
+                if board[new_cap[1]][new_cap[0]]:
+                    if board[new_cap[1]][new_cap[0]].isWhite != self.isWhite:
+                        moves.append(new_cap)
+                else:
+                    moves.append(new_cap)
+        return moves
+
 class Knight_b(Pieces):
     def __init__(self):
         super().__init__()
@@ -129,6 +167,19 @@ class Knight_b(Pieces):
         self.img = pygame.image.load(os.path.join('images', 'b_knight_png_512px.png'))
         self.img = pygame.transform.scale(self.img, (self.square_size, self.square_size))
         
+    def get_moves(self, board):
+        self.directions = [(2, 1), (2, -1), (1, 2), (-1, 2), (-2, 1), (-2, -1), (1, -2), (-1, 2)]
+        moves = [self.pos]
+        for d in self.directions:
+            new_cap = self.add_pos(self.pos, d)
+            if new_cap:
+                if board[new_cap[1]][new_cap[0]]:
+                    if board[new_cap[1]][new_cap[0]].isWhite != self.isWhite:
+                        moves.append(new_cap)
+                else:
+                    moves.append(new_cap)
+        return moves
+
 class Rook_w(Pieces):
     def __init__(self):
         super().__init__()
@@ -141,7 +192,7 @@ class Rook_w(Pieces):
         self.directions = [(1, 0), (-1, 0), (0, 1), (0 , -1)]
         moves = [self.pos]
         for direction in self.directions:
-            moves += self.check_straight(self.pos, direction, board)
+            moves += self.check_recursive(self.pos, direction, board)
         return moves
 
 class Rook_b(Pieces):
@@ -156,7 +207,7 @@ class Rook_b(Pieces):
         self.directions = [(1, 0), (-1, 0), (0, 1), (0 , -1)]
         moves = [self.pos]
         for direction in self.directions:
-            moves += self.check_straight(self.pos, direction, board)
+            moves += self.check_recursive(self.pos, direction, board)
         return moves
 
 
