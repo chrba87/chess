@@ -117,20 +117,15 @@ class Pawn_w(Pieces):
     
     def get_moves(self, board):
         self.move = (0, -1)
-        self.cap1 = (-1, -1)
-        self.cap2 = (1, -1)
+        self.caps = [(-1, -1), (1, -1)]
         moves = [self.pos]
+        for cap in self.caps:
+            new_cap = self.add_pos(self.pos, cap)
+            if new_cap:
+                if board[new_cap[1]][new_cap[0]]:
+                    if board[new_cap[1]][new_cap[0]] != self.isWhite:
+                        moves.append(new_cap)
         new_pos = self.add_pos(self.pos, self.move)
-        new_cap1 = self.add_pos(self.pos, self.cap1)
-        if new_cap1:
-            if board[new_cap1[1]][new_cap1[0]]:
-                if board[new_cap1[1]][new_cap1[0]].isWhite == False:
-                    moves.append(new_cap1)
-        new_cap2 = self.add_pos(self.pos, self.cap2)
-        if new_cap2:
-            if board[new_cap2[1]][new_cap2[0]]:
-                if board[new_cap2[1]][new_cap2[0]].isWhite == False:
-                    moves.append(new_cap2)
         if board[new_pos[1]][new_pos[0]]:
             return moves
         else:
@@ -154,20 +149,15 @@ class Pawn_b(Pieces):
 
     def get_moves(self, board):
         self.move = (0, 1)
-        self.cap1 = (-1, 1)
-        self.cap2 = (1, 1)
+        self.caps = [(-1, 1), (1, 1)]
         moves = [self.pos]
+        for cap in self.caps:
+            new_cap = self.add_pos(self.pos, cap)
+            if new_cap:
+                if board[new_cap[1]][new_cap[0]]:
+                    if board[new_cap[1]][new_cap[0]] != self.isWhite:
+                        moves.append(new_cap)
         new_pos = self.add_pos(self.pos, self.move)
-        new_cap1 = self.add_pos(self.pos, self.cap1)
-        if new_cap1:
-            if board[new_cap1[1]][new_cap1[0]]:
-                if board[new_cap1[1]][new_cap1[0]].isWhite == True:
-                    moves.append(new_cap1)
-        new_cap2 = self.add_pos(self.pos, self.cap2)
-        if new_cap2:
-            if board[new_cap2[1]][new_cap2[0]]:
-                if board[new_cap2[1]][new_cap2[0]].isWhite == True:
-                    moves.append(new_cap2)
         if board[new_pos[1]][new_pos[0]]:
             return moves
         else:
