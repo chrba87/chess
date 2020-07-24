@@ -21,6 +21,19 @@ class Pieces:
     def get_moves(self, board):
         return [self.pos]
 
+    def check_straight(self, pos, dir, board):
+        new_pos = self.add_pos(pos, dir)
+        if not new_pos:
+            return []
+        if board[new_pos[1]][new_pos[0]]:
+            if board[new_pos[1]][new_pos[0]].isWhite == self.isWhite:
+                return []
+            else:
+                return [new_pos]
+        else:
+            moves = [new_pos] + self.check_straight(new_pos, dir, board)
+        return moves
+
 class Queen_w(Pieces):
     def __init__(self):
         super().__init__()
@@ -107,6 +120,14 @@ class Rook_b(Pieces):
         self.img = pygame.image.load(os.path.join('images', 'b_rook_png_512px.png'))
         self.img = pygame.transform.scale(self.img, (self.square_size, self.square_size))
         
+    def get_moves(self, board):
+        self.directions = [(1, 0), (-1, 0), (0, 1), (0 , -1)]
+        moves = [self.pos]
+        for direction in self.directions:
+            moves += self.check_straight(self.pos, direction, board)
+        return moves
+
+
 class Pawn_w(Pieces):
     def __init__(self):
         super().__init__()
@@ -123,7 +144,7 @@ class Pawn_w(Pieces):
             new_cap = self.add_pos(self.pos, cap)
             if new_cap:
                 if board[new_cap[1]][new_cap[0]]:
-                    if board[new_cap[1]][new_cap[0]] != self.isWhite:
+                    if board[new_cap[1]][new_cap[0]].isWhite != self.isWhite:
                         moves.append(new_cap)
         new_pos = self.add_pos(self.pos, self.move)
         if board[new_pos[1]][new_pos[0]]:
@@ -155,7 +176,7 @@ class Pawn_b(Pieces):
             new_cap = self.add_pos(self.pos, cap)
             if new_cap:
                 if board[new_cap[1]][new_cap[0]]:
-                    if board[new_cap[1]][new_cap[0]] != self.isWhite:
+                    if board[new_cap[1]][new_cap[0]].isWhite != self.isWhite:
                         moves.append(new_cap)
         new_pos = self.add_pos(self.pos, self.move)
         if board[new_pos[1]][new_pos[0]]:
