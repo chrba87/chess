@@ -9,7 +9,6 @@ surface = pygame.display.set_mode(size)
 
 board = Board()
 
-board.board[0][3] = "Q"
 
 for y in board.board:
     print(y)
@@ -18,6 +17,10 @@ playing = True
 while playing:
     for event in pygame.event.get():
         if event.type == pygame.QUIT: sys.exit()
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if pygame.mouse.get_pressed()[0]:
+                pos = pygame.mouse.get_pos()
+                board.get_mouse(pos[0], pos[1], surface)
 
     
     board.draw(surface)
