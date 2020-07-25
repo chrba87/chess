@@ -1,6 +1,7 @@
 import pygame
 from chess_pieces import *
 from copy import deepcopy
+from itertools import product
 
 class Board:
     def __init__(self):
@@ -13,13 +14,13 @@ class Board:
     def reset_board_moves(self):
         self.chosen_piece = (None, None)
         self.board_moves = [[None for x in range(8)] for y in range(8)]
-        self.update_all_moves(self.board)
+        self.update_all_moves()
 
-    def update_all_moves(self, board):
+    def update_all_moves(self):
         for i in range(8):
             for j in range(8):
-                if board[i][j]:
-                    board[i][j].update_moves(board)
+                if self.board[i][j]:
+                    self.board[i][j].update_moves(self.board)
 
     def initiate_board(self):
         self.board[7][3] = Queen_w(3, 7)
@@ -58,46 +59,41 @@ class Board:
                 if self.board[i][j]:
                     surface.blit(self.board[i][j].img, (j*self.square_size, i*self.square_size))
 
-    def get_oponents_moves(self, board):
-        moves = []
-        for i in range(8):
-            for j in range(8):
-                if board[i][j]:
-                    if board[i][j].isWhite != self.whites_turn:
-                        moves += board[i][j].get_moves()
-        return moves
+    def get_oponents_moves(self):
+        return [m for x in [self.board[i][j].get_moves() for i, j in product(range(8), range(8)) if self.board[i][j] and self.board[i][j].isWhite != self.whites_turn] for m in x]
 
-    def locate_king(self, board):
-        for i in range(8):
-            for j in range(8):
-                if board[i][j] and board[i][j].isKing and board[i][j].isWhite == self.whites_turn:
-                    return (j, i)
+    def locate_king(self):
+        for i, j in product(range(8), range(8)):
+            if self.board[i][j] and self.board[i][j].isKing and self.board[i][j].isWhite == self.whites_turn:
+                return (j, i)
 
     def isMate(self):
+        self.update_all_moves()
+        saved_chosen = self.chosen_piece
         moves = []
-        for i in range(8):
-            for j in range(8):
-                if board[i][j]:
-                    if board[i][j].isWhite == self.whites_turn:
-                        moves += self.update_legal_moves(board[i][j].get_moves())
+        for i, j in product(range(8), range(8)):
+            if self.board[i][j] and self.board[i][j].isWhite == self.whites_turn:
+                self.chosen_piece = (j, i)
+                moves += self.update_legal_moves([x for x in self.board[i][j].get_moves() if x != self.chosen_piece])
+        self.chosen_piece = saved_chosen
+        print(moves)
         if len(moves) == 0:
+            print("Checkmate!")
             return True
         else:
             return False
 
-    def isCheck(self, board):
-        position_king = self.locate_king(board)
-        all_oponent_moves = self.get_oponents_moves(board)
+    def isCheck(self):
+        position_king = self.locate_king()
+        all_oponent_moves = self.get_oponents_moves()
         if position_king in all_oponent_moves:
-            if self.isMate:
-                print("Checkmate!")
             return True
 
     def reverse_move(self, move, saved_square):
             self.board[self.chosen_piece[1]][self.chosen_piece[0]] = self.board[move[1]][move[0]] 
             self.board[self.chosen_piece[1]][self.chosen_piece[0]].pos = self.chosen_piece
             self.board[move[1]][move[0]] = saved_square 
-            self.update_all_moves(self.board)
+            self.update_all_moves()
 
     def update_legal_moves(self, moves):
         legal_moves = []
@@ -109,8 +105,8 @@ class Board:
             self.board[move[1]][move[0]] = self.board[self.chosen_piece[1]][self.chosen_piece[0]]
             self.board[self.chosen_piece[1]][self.chosen_piece[0]] = None
             self.board[move[1]][move[0]].pos = move 
-            self.update_all_moves(self.board)
-            if self.isCheck(self.board):
+            self.update_all_moves()
+            if self.isCheck():
                 self.reverse_move(move, saved_square)
                 continue
             else:
@@ -130,9 +126,10 @@ class Board:
             self.board[self.chosen_piece[1]][self.chosen_piece[0]] = None
             self.board[y][x].pos = (x, y)
             self.board[y][x].first_move = False
+            self.isCheck()
             self.whites_turn = not self.whites_turn
+            self.isMate()
             self.reset_board_moves()
-            self.isCheck(self.board)
             return
         else:
             self.reset_board_moves()
