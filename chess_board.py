@@ -57,7 +57,7 @@ class Board:
                     surface.blit(self.img_board_light, (j*self.square_size, i*self.square_size))
                 dark = not dark
                 if self.board_moves[i][j]:
-                    pygame.draw.rect(surface, (0, 255, 0), (j * self.square_size, i * self.square_size, self.square_size, self.square_size), 5)
+                    pygame.draw.rect(surface, (0, 255, 50), (j * self.square_size, i * self.square_size, self.square_size, self.square_size), 5)
                 if self.board[i][j]:
                     surface.blit(self.board[i][j].img, (j*self.square_size+2, i*self.square_size+2))
 
