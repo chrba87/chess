@@ -43,7 +43,6 @@ class Board:
             self.board[1][i] = Pawn_b(i, 1)
             self.board[6][i] = Pawn_w(i, 6)
 
-
     def draw(self, surface):
         fill = True
         for i in range(8): 
@@ -68,7 +67,6 @@ class Board:
                 return (j, i)
 
     def isMate(self):
-        self.update_all_moves()
         saved_chosen = self.chosen_piece
         moves = []
         for i, j in product(range(8), range(8)):
@@ -76,7 +74,6 @@ class Board:
                 self.chosen_piece = (j, i)
                 moves += self.update_legal_moves([x for x in self.board[i][j].get_moves() if x != self.chosen_piece])
         self.chosen_piece = saved_chosen
-        print(moves)
         if len(moves) == 0:
             print("Checkmate!")
             return True
@@ -90,10 +87,10 @@ class Board:
             return True
 
     def reverse_move(self, move, saved_square):
-            self.board[self.chosen_piece[1]][self.chosen_piece[0]] = self.board[move[1]][move[0]] 
-            self.board[self.chosen_piece[1]][self.chosen_piece[0]].pos = self.chosen_piece
-            self.board[move[1]][move[0]] = saved_square 
-            self.update_all_moves()
+        self.board[self.chosen_piece[1]][self.chosen_piece[0]] = self.board[move[1]][move[0]] 
+        self.board[self.chosen_piece[1]][self.chosen_piece[0]].pos = self.chosen_piece
+        self.board[move[1]][move[0]] = saved_square 
+        self.update_all_moves()
 
     def update_legal_moves(self, moves):
         legal_moves = []
@@ -102,9 +99,7 @@ class Board:
                 legal_moves.append(move)
                 continue
             saved_square = self.board[move[1]][move[0]]
-            self.board[move[1]][move[0]] = self.board[self.chosen_piece[1]][self.chosen_piece[0]]
-            self.board[self.chosen_piece[1]][self.chosen_piece[0]] = None
-            self.board[move[1]][move[0]].pos = move 
+            self.move(self.chosen_piece, move)
             self.update_all_moves()
             if self.isCheck():
                 self.reverse_move(move, saved_square)
@@ -114,17 +109,19 @@ class Board:
                 legal_moves.append(move)
         return legal_moves
 
+    def move(self, from_x_y, to_x_y):
+        self.board[to_x_y[1]][to_x_y[0]] = self.board[from_x_y[1]][from_x_y[0]]
+        self.board[from_x_y[1]][from_x_y[0]] = None
+        self.board[to_x_y[1]][to_x_y[0]].pos = to_x_y
+
 
     def get_mouse(self, x, y, surface):
         x = x // self.square_size
         y = y // self.square_size
         if self.board_moves[y][x]: 
-            if self.board[y][x]:
-                if self.board[y][x].pos == self.chosen_piece:
-                    return
-            self.board[y][x] = self.board[self.chosen_piece[1]][self.chosen_piece[0]]
-            self.board[self.chosen_piece[1]][self.chosen_piece[0]] = None
-            self.board[y][x].pos = (x, y)
+            if self.board[y][x] and self.board[y][x].pos == self.chosen_piece:
+                return
+            self.move(self.chosen_piece, (x, y))
             self.board[y][x].first_move = False
             self.isCheck()
             self.whites_turn = not self.whites_turn
