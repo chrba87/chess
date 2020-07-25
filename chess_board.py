@@ -8,6 +8,10 @@ class Board:
         self.board = [[None for x in range(8)] for y in range(8)]
         self.square_size = 100
         self.whites_turn = True
+        self.img_board_light = pygame.image.load(os.path.join('images', 'square_gray_light_png_512px.png'))
+        self.img_board_light = pygame.transform.scale(self.img_board_light, (self.square_size, self.square_size))
+        self.img_board_dark = pygame.image.load(os.path.join('images', 'square_gray_dark_png_512px.png'))
+        self.img_board_dark = pygame.transform.scale(self.img_board_dark, (self.square_size, self.square_size))
         self.initiate_board()
         self.reset_board_moves()
 
@@ -17,10 +21,9 @@ class Board:
         self.update_all_moves()
 
     def update_all_moves(self):
-        for i in range(8):
-            for j in range(8):
-                if self.board[i][j]:
-                    self.board[i][j].update_moves(self.board)
+        for i, j in product(range(8), range(8)):
+            if self.board[i][j]:
+                self.board[i][j].update_moves(self.board)
 
     def initiate_board(self):
         self.board[7][3] = Queen_w(3, 7)
@@ -44,19 +47,19 @@ class Board:
             self.board[6][i] = Pawn_w(i, 6)
 
     def draw(self, surface):
-        fill = True
+        dark = True
         for i in range(8): 
-            fill = not fill
+            dark = not dark
             for j in range(8):
-                if fill:
-                    pygame.draw.rect(surface, (0, 0, 0), (j * self.square_size, i * self.square_size, self.square_size, self.square_size))
+                if dark:
+                    surface.blit(self.img_board_dark, (j*self.square_size, i*self.square_size))
                 else:
-                    pygame.draw.rect(surface, (255, 255, 255), (j * self.square_size, i * self.square_size, self.square_size, self.square_size))
-                fill = not fill
+                    surface.blit(self.img_board_light, (j*self.square_size, i*self.square_size))
+                dark = not dark
                 if self.board_moves[i][j]:
                     pygame.draw.rect(surface, (0, 255, 0), (j * self.square_size, i * self.square_size, self.square_size, self.square_size), 5)
                 if self.board[i][j]:
-                    surface.blit(self.board[i][j].img, (j*self.square_size, i*self.square_size))
+                    surface.blit(self.board[i][j].img, (j*self.square_size+2, i*self.square_size+2))
 
     def get_oponents_moves(self):
         return [m for x in [self.board[i][j].get_moves() for i, j in product(range(8), range(8)) if self.board[i][j] and self.board[i][j].isWhite != self.whites_turn] for m in x]
@@ -87,8 +90,7 @@ class Board:
             return True
 
     def reverse_move(self, move, saved_square):
-        self.board[self.chosen_piece[1]][self.chosen_piece[0]] = self.board[move[1]][move[0]] 
-        self.board[self.chosen_piece[1]][self.chosen_piece[0]].pos = self.chosen_piece
+        self.move(move, self.chosen_piece)
         self.board[move[1]][move[0]] = saved_square 
         self.update_all_moves()
 

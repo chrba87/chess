@@ -6,7 +6,7 @@ from collections import namedtuple
 class Pieces:
     def __init__(self, x, y):
         self.pos = (x, y) 
-        self.square_size = 95
+        self.square_size = 96
         self.first_move = True
         self.isKing = False
         self.possible_moves = [self.pos]
@@ -163,7 +163,7 @@ class Knight_b(Pieces):
         self.symbol = "kn"
         self.img = pygame.image.load(os.path.join('images', 'b_knight_png_512px.png'))
         self.img = pygame.transform.scale(self.img, (self.square_size, self.square_size))
-        self.directions = [(2, 1), (2, -1), (1, 2), (-1, 2), (-2, 1), (-2, -1), (1, -2), (-1, 2)]
+        self.directions = [(2, 1), (2, -1), (1, 2), (-1, 2), (-2, 1), (-2, -1), (1, -2), (-1, -2)]
 
     def update_moves(self, board):
         self.possible_moves = [self.pos]
