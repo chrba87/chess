@@ -9,10 +9,6 @@ surface = pygame.display.set_mode(size)
 
 board = Board()
 
-
-for y in board.board:
-    print(y)
-
 playing = True
 while playing:
     for event in pygame.event.get():

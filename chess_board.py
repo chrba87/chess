@@ -73,16 +73,30 @@ class Board:
                 if board[i][j] and board[i][j].isKing and board[i][j].isWhite == self.whites_turn:
                     return (j, i)
 
+    def isMate(self):
+        moves = []
+        for i in range(8):
+            for j in range(8):
+                if board[i][j]:
+                    if board[i][j].isWhite == self.whites_turn:
+                        moves += self.update_legal_moves(board[i][j].get_moves())
+        if len(moves) == 0:
+            return True
+        else:
+            return False
+
     def isCheck(self, board):
         position_king = self.locate_king(board)
         all_oponent_moves = self.get_oponents_moves(board)
         if position_king in all_oponent_moves:
+            if self.isMate:
+                print("Checkmate!")
             return True
 
     def reverse_move(self, move, saved_square):
-            self.board[self.chosen_piece[1]][self.chosen_piece[0]] = self.board[move[1]][move[1]] 
+            self.board[self.chosen_piece[1]][self.chosen_piece[0]] = self.board[move[1]][move[0]] 
             self.board[self.chosen_piece[1]][self.chosen_piece[0]].pos = self.chosen_piece
-            self.board[move[1]][move[1]] = saved_square 
+            self.board[move[1]][move[0]] = saved_square 
             self.update_all_moves(self.board)
 
     def update_legal_moves(self, moves):
@@ -91,10 +105,10 @@ class Board:
             if move == self.chosen_piece:
                 legal_moves.append(move)
                 continue
-            saved_square = self.board[move[1]][move[1]]
-            self.board[move[1]][move[1]] = self.board[self.chosen_piece[1]][self.chosen_piece[0]]
+            saved_square = self.board[move[1]][move[0]]
+            self.board[move[1]][move[0]] = self.board[self.chosen_piece[1]][self.chosen_piece[0]]
             self.board[self.chosen_piece[1]][self.chosen_piece[0]] = None
-            self.board[move[1]][move[1]].pos = move 
+            self.board[move[1]][move[0]].pos = move 
             self.update_all_moves(self.board)
             if self.isCheck(self.board):
                 self.reverse_move(move, saved_square)
@@ -109,10 +123,7 @@ class Board:
         x = x // self.square_size
         y = y // self.square_size
         if self.board_moves[y][x]: 
-            print(self.board[y][x])
             if self.board[y][x]:
-                print(self.board[y][x].pos)
-                print(self.chosen_piece)
                 if self.board[y][x].pos == self.chosen_piece:
                     return
             self.board[y][x] = self.board[self.chosen_piece[1]][self.chosen_piece[0]]
