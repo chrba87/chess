@@ -20,8 +20,22 @@ class Pieces:
             return None
         return pos
 
-    def get_moves(self):
-        return self.possible_moves
+    def update_single_step_moves(self, board):
+        self.possible_moves = [self.pos]
+        for d in self.directions:
+            new_pos = self.add_pos(self.pos, d)
+            if new_pos:
+                if board[new_pos[1]][new_pos[0]]:
+                    if board[new_pos[1]][new_pos[0]].isWhite != self.isWhite:
+                        self.possible_moves.append(new_pos)
+                else:
+                    self.possible_moves.append(new_pos)
+
+    def update_recursive_moves(self, board):
+        self.possible_moves = [self.pos]
+        for direction in self.directions:
+            self.possible_moves += self.check_recursive(self.pos, direction, board)
+
 
     def check_recursive(self, pos, dir, board):
         new_pos = self.add_pos(pos, dir)
@@ -43,100 +57,92 @@ class Pieces:
 class Queen(Pieces):
     def __init__(self, x, y, isWhite):
         super().__init__(x, y, isWhite)
-        self.isWhite = True
         self.symbol = "Q"
-        self.img = pygame.image.load(os.path.join('images', 'w_queen_png_512px.png'))
+        if isWhite:
+            self.img = pygame.image.load(os.path.join('images', 'w_queen_png_512px.png'))
+        else:
+            self.img = pygame.image.load(os.path.join('images', 'b_queen_png_512px.png'))
         self.img = pygame.transform.scale(self.img, (self.square_size, self.square_size))
         self.directions = [(1, 0), (-1, 0), (0, 1), (0 , -1), (1, 1), (-1, -1), (1, -1), (-1 , 1)]
 
     def update_moves(self, board):
-        self.possible_moves = [self.pos]
-        for direction in self.directions:
-            self.possible_moves += self.check_recursive(self.pos, direction, board)
+        self.update_recursive_moves(board)
 
 
 class King(Pieces):
     def __init__(self, x, y, isWhite):
         super().__init__(x, y, isWhite)
-        self.isWhite = True
         self.isKing = True
         self.symbol = "K"
-        self.img = pygame.image.load(os.path.join('images', 'w_king_png_512px.png'))
+        if isWhite:
+            self.img = pygame.image.load(os.path.join('images', 'w_king_png_512px.png'))
+        else:
+            self.img = pygame.image.load(os.path.join('images', 'b_king_png_512px.png'))
         self.img = pygame.transform.scale(self.img, (self.square_size, self.square_size))
         self.directions = [(1, 0), (-1, 0), (0, 1), (0 , -1), (1, 1), (-1, -1), (1, -1), (-1 , 1)]
 
     def update_moves(self, board):
-        self.possible_moves = [self.pos]
-        for d in self.directions:
-            new_pos = self.add_pos(self.pos, d)
-            if new_pos:
-                if board[new_pos[1]][new_pos[0]]:
-                    if board[new_pos[1]][new_pos[0]].isWhite != self.isWhite:
-                        self.possible_moves.append(new_pos)
-                else:
-                    self.possible_moves.append(new_pos)
+        self.update_single_step_moves(board)
 
 
 class Bishop(Pieces):
     def __init__(self, x, y, isWhite):
         super().__init__(x, y, isWhite)
-        self.isWhite = True
         self.symbol = "B"
-        self.img = pygame.image.load(os.path.join('images', 'w_bishop_png_512px.png'))
+        if isWhite:
+            self.img = pygame.image.load(os.path.join('images', 'w_bishop_png_512px.png'))
+        else:
+            self.img = pygame.image.load(os.path.join('images', 'b_bishop_png_512px.png'))
         self.img = pygame.transform.scale(self.img, (self.square_size, self.square_size))
         self.directions = [(1, 1), (-1, -1), (1, -1), (-1 , 1)]
 
     def update_moves(self, board):
-        self.possible_moves = [self.pos]
-        for direction in self.directions:
-            self.possible_moves += self.check_recursive(self.pos, direction, board)
+        self.update_recursive_moves(board)
 
 
 class Knight(Pieces):
     def __init__(self, x, y, isWhite):
         super().__init__(x, y, isWhite)
-        self.isWhite = True
         self.symbol = "KN"
-        self.img = pygame.image.load(os.path.join('images', 'w_knight_png_512px.png'))
+        if isWhite:
+            self.img = pygame.image.load(os.path.join('images', 'w_knight_png_512px.png'))
+        else:
+            self.img = pygame.image.load(os.path.join('images', 'b_knight_png_512px.png'))
         self.img = pygame.transform.scale(self.img, (self.square_size, self.square_size))
         self.directions = [(2, 1), (2, -1), (1, 2), (-1, 2), (-2, 1), (-2, -1), (1, -2), (-1, -2)]
 
     def update_moves(self, board):
-        self.possible_moves = [self.pos]
-        for d in self.directions:
-            new_pos = self.add_pos(self.pos, d)
-            if new_pos:
-                if board[new_pos[1]][new_pos[0]]:
-                    if board[new_pos[1]][new_pos[0]].isWhite != self.isWhite:
-                        self.possible_moves.append(new_pos)
-                else:
-                    self.possible_moves.append(new_pos)
+        self.update_single_step_moves(board)
 
 
 class Rook(Pieces):
     def __init__(self, x, y, isWhite):
         super().__init__(x, y, isWhite)
-        self.isWhite = True
         self.symbol = "R"
-        self.img = pygame.image.load(os.path.join('images', 'w_rook_png_512px.png'))
+        if isWhite:
+            self.img = pygame.image.load(os.path.join('images', 'w_rook_png_512px.png'))
+        else:
+            self.img = pygame.image.load(os.path.join('images', 'b_rook_png_512px.png'))
         self.img = pygame.transform.scale(self.img, (self.square_size, self.square_size))
         self.directions = [(1, 0), (-1, 0), (0, 1), (0 , -1)]
 
     def update_moves(self, board):
-        self.possible_moves = [self.pos]
-        for direction in self.directions:
-            self.possible_moves += self.check_recursive(self.pos, direction, board)
+        self.update_recursive_moves(board)
 
 
 class Pawn(Pieces):
     def __init__(self, x, y, isWhite):
         super().__init__(x, y, isWhite)
-        self.isWhite = True
         self.symbol = "P"
-        self.img = pygame.image.load(os.path.join('images', 'w_pawn_png_512px.png'))
+        if isWhite:
+            self.img = pygame.image.load(os.path.join('images', 'w_pawn_png_512px.png'))
+            self.move = (0, -1)
+            self.caps = [(-1, -1), (1, -1)]
+        else:
+            self.img = pygame.image.load(os.path.join('images', 'b_pawn_png_512px.png'))
+            self.move = (0, 1)
+            self.caps = [(1, 1), (1, -1)]
         self.img = pygame.transform.scale(self.img, (self.square_size, self.square_size))
-        self.move = (0, -1)
-        self.caps = [(-1, -1), (1, -1)]
     
     def update_moves(self, board):
         self.possible_moves = [self.pos]
