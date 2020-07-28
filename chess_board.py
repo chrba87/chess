@@ -112,6 +112,14 @@ class Board:
         return legal_moves
 
     def move(self, from_x_y, to_x_y):
+        # Fix reserse move for promotion
+        if self.board[from_x_y[1]][from_x_y[0]].symbol == "P":
+            if self.board[from_x_y[1]][from_x_y[0]].isWhite and to_x_y[1] == 0:
+                self.board[to_x_y[1]][to_x_y[0]] = Queen(to_x_y[0], to_x_y[1], True)
+                return
+            elif not self.board[from_x_y[1]][from_x_y[0]].isWhite and to_x_y[1] == 7:
+                self.board[to_x_y[1]][to_x_y[0]] = Queen(to_x_y[0], to_x_y[1], False)
+                return
         self.board[to_x_y[1]][to_x_y[0]] = self.board[from_x_y[1]][from_x_y[0]]
         self.board[from_x_y[1]][from_x_y[0]] = None
         self.board[to_x_y[1]][to_x_y[0]].pos = to_x_y
