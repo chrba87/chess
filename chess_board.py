@@ -26,25 +26,25 @@ class Board:
                 self.board[i][j].update_moves(self.board)
 
     def initiate_board(self):
-        self.board[7][3] = Queen_w(3, 7)
-        self.board[0][3] = Queen_b(3, 0)
-        self.board[7][4] = King_w(4, 7)
-        self.board[0][4] = King_b(4, 0)
-        self.board[7][2] = Bishop_w(2, 7)
-        self.board[0][2] = Bishop_b(2, 0)
-        self.board[7][5] = Bishop_w(5, 7)
-        self.board[0][5] = Bishop_b(5, 0)
-        self.board[7][1] = Knight_w(1, 7)
-        self.board[0][1] = Knight_b(1, 0)
-        self.board[7][6] = Knight_w(6, 7)
-        self.board[0][6] = Knight_b(6, 0)
-        self.board[7][0] = Rook_w(0, 7)
-        self.board[0][0] = Rook_b(0, 0)
-        self.board[7][7] = Rook_w(7, 7)
-        self.board[0][7] = Rook_b(7, 0)
+        self.board[7][3] = Queen(3, 7, True)
+        self.board[0][3] = Queen(3, 0, False)
+        self.board[7][4] = King(4, 7, True)
+        self.board[0][4] = King(4, 0, False)
+        self.board[7][2] = Bishop(2, 7, True)
+        self.board[0][2] = Bishop(2, 0, False)
+        self.board[7][5] = Bishop(5, 7, True)
+        self.board[0][5] = Bishop(5, 0, False)
+        self.board[7][1] = Knight(1, 7, True)
+        self.board[0][1] = Knight(1, 0, False)
+        self.board[7][6] = Knight(6, 7, True)
+        self.board[0][6] = Knight(6, 0, False)
+        self.board[7][0] = Rook(0, 7, True)
+        self.board[0][0] = Rook(0, 0, False)
+        self.board[7][7] = Rook(7, 7, True)
+        self.board[0][7] = Rook(7, 0, False)
         for i in range(8):
-            self.board[1][i] = Pawn_b(i, 1)
-            self.board[6][i] = Pawn_w(i, 6)
+            self.board[1][i] = Pawn(i, 1, False)
+            self.board[6][i] = Pawn(i, 6, True)
 
     def draw(self, surface):
         dark = True
@@ -62,7 +62,7 @@ class Board:
                     surface.blit(self.board[i][j].img, (j*self.square_size+2, i*self.square_size+2))
 
     def get_oponents_moves(self):
-        return [m for x in [self.board[i][j].get_moves() for i, j in product(range(8), range(8)) if self.board[i][j] and self.board[i][j].isWhite != self.whites_turn] for m in x]
+        return [m for x in [self.board[i][j].possible_moves for i, j in product(range(8), range(8)) if self.board[i][j] and self.board[i][j].isWhite != self.whites_turn] for m in x]
 
     def locate_king(self):
         for i, j in product(range(8), range(8)):
@@ -75,7 +75,7 @@ class Board:
         for i, j in product(range(8), range(8)):
             if self.board[i][j] and self.board[i][j].isWhite == self.whites_turn:
                 self.chosen_piece = (j, i)
-                moves += self.update_legal_moves([x for x in self.board[i][j].get_moves() if x != self.chosen_piece])
+                moves += self.update_legal_moves([x for x in self.board[i][j].possible_moves if x != self.chosen_piece])
         self.chosen_piece = saved_chosen
         if len(moves) == 0:
             print("Checkmate!")
@@ -136,7 +136,7 @@ class Board:
             if self.board[y][x].isWhite != self.whites_turn:
                 return
             self.chosen_piece = (x, y)
-            moves = self.board[y][x].get_moves()
+            moves = self.board[y][x].possible_moves
             moves = self.update_legal_moves(moves)
             for move in moves:
                 self.board_moves[move[1]][move[0]] = True
