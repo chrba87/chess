@@ -1,4 +1,3 @@
-import pygame
 from chess_pieces import *
 from copy import deepcopy
 from itertools import product
@@ -8,10 +7,6 @@ class Board:
         self.board = [[None for x in range(8)] for y in range(8)]
         self.square_size = 100
         self.whites_turn = True
-        self.img_board_light = pygame.image.load(os.path.join('images', 'square_gray_light_png_512px.png'))
-        self.img_board_light = pygame.transform.scale(self.img_board_light, (self.square_size, self.square_size))
-        self.img_board_dark = pygame.image.load(os.path.join('images', 'square_gray_dark_png_512px.png'))
-        self.img_board_dark = pygame.transform.scale(self.img_board_dark, (self.square_size, self.square_size))
         self.initiate_board()
         self.reset_board_moves()
 
@@ -45,21 +40,6 @@ class Board:
         for i in range(8):
             self.board[1][i] = Pawn(i, 1, False)
             self.board[6][i] = Pawn(i, 6, True)
-
-    def draw(self, surface):
-        dark = True
-        for i in range(8): 
-            dark = not dark
-            for j in range(8):
-                if dark:
-                    surface.blit(self.img_board_dark, (j*self.square_size, i*self.square_size))
-                else:
-                    surface.blit(self.img_board_light, (j*self.square_size, i*self.square_size))
-                dark = not dark
-                if self.board_moves[i][j]:
-                    pygame.draw.rect(surface, (0, 255, 50), (j * self.square_size, i * self.square_size, self.square_size, self.square_size), 5)
-                if self.board[i][j]:
-                    surface.blit(self.board[i][j].img, (j*self.square_size+2, i*self.square_size+2))
 
     def get_oponents_moves(self):
         return [m for x in [self.board[i][j].possible_moves for i, j in product(range(8), range(8)) if self.board[i][j] and self.board[i][j].isWhite != self.whites_turn] for m in x]
@@ -111,6 +91,8 @@ class Board:
                 legal_moves.append(move)
         return legal_moves
 
+
+
     def move(self, from_x_y, to_x_y):
         # Fix reserse move for promotion
         if self.board[from_x_y[1]][from_x_y[0]].symbol == "P":
@@ -125,7 +107,7 @@ class Board:
         self.board[to_x_y[1]][to_x_y[0]].pos = to_x_y
 
 
-    def get_mouse(self, x, y, surface):
+    def get_mouse(self, x, y):
         x = x // self.square_size
         y = y // self.square_size
         if self.board_moves[y][x]: 

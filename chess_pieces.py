@@ -141,7 +141,7 @@ class Pawn(Pieces):
         else:
             self.img = pygame.image.load(os.path.join('images', 'b_pawn_png_512px.png'))
             self.move = (0, 1)
-            self.caps = [(1, 1), (1, -1)]
+            self.caps = [(1, 1), (-1, 1)]
         self.img = pygame.transform.scale(self.img, (self.square_size, self.square_size))
     
     def update_moves(self, board):

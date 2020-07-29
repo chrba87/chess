@@ -1,6 +1,9 @@
 import pygame
 import sys
 from chess_board import Board
+from game import Game
+import copy
+
 pygame.init()
 
 size = hight, width = 800, 800
@@ -8,6 +11,8 @@ size = hight, width = 800, 800
 surface = pygame.display.set_mode(size)
 
 board = Board()
+new_board = copy.deepcopy(board)
+game = Game(board)
 
 playing = True
 while playing:
@@ -16,9 +21,9 @@ while playing:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if pygame.mouse.get_pressed()[0]:
                 pos = pygame.mouse.get_pos()
-                board.get_mouse(pos[0], pos[1], surface)
+                board.get_mouse(pos[0], pos[1])
 
     
-    board.draw(surface)
+    game.draw(surface)
 
     pygame.display.flip()
