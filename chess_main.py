@@ -11,7 +11,7 @@ size = hight, width = 800, 800
 surface = pygame.display.set_mode(size)
 
 board = Board()
-new_board = copy.deepcopy(board)
+
 game = Game(board)
 
 playing = True
