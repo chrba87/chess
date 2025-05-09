@@ -3,6 +3,7 @@ import sys
 from chess_board import Board
 pygame.init()
 
+
 size = hight, width = 800, 800
 
 surface = pygame.display.set_mode(size)
